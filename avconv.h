@@ -431,7 +431,7 @@ FilterGraph *init_simple_filtergraph(InputStream *ist, OutputStream *ost);
 int init_complex_filtergraph(FilterGraph *fg);
 
 int avconv_parse_options(int argc, char **argv);
-int avconv_parse_json_options(char* json);
+int avconv_parse_json_options(char *json);
 
 int vdpau_init(AVCodecContext *s);
 int dxva2_init(AVCodecContext *s);

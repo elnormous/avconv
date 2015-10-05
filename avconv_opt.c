@@ -19,6 +19,11 @@
  */
 
 #include <stdint.h>
+#include <json-c/json.h>
+#include <sys/mman.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "avconv.h"
 #include "cmdutils.h"
@@ -2275,9 +2280,56 @@ fail:
     return ret;
 }
 
-int avconv_parse_json_options(char* json)
+int avconv_parse_json_options(char *json)
 {
-    return -1;
+    int ret;
+    struct json_object *fjson;
+    FILE *json_file = fopen(json, "r");
+    struct stat sb;
+    const char *memblock;
+    
+    if (!json_file) {
+        ret = -1;
+        av_log(NULL, AV_LOG_FATAL, "Cannot read json config file '%s': %s\n",
+               json, strerror(errno));
+        goto fail;
+    }
+    
+    fstat(fileno(json_file), &sb);
+    
+    memblock = mmap(NULL, sb.st_size, PROT_WRITE, MAP_PRIVATE, fileno(json_file), 0);
+    
+    if (memblock == MAP_FAILED) {
+        ret = -1;
+        av_log(NULL, AV_LOG_FATAL, "Failed to map file '%s': %s\n",
+               json, strerror(errno));
+        goto fail;
+    }
+    
+    fjson = json_tokener_parse(memblock);
+    
+    struct json_object* child;
+    if (json_object_object_get_ex(fjson, "input", &child)) {
+        ret = json_object_get_int(child);
+        printf("ret: %d\n", ret);
+    }
+    
+    ret = -1;
+    
+fail:
+    if (fjson) {
+        json_object_object_del(fjson, "");
+    }
+    
+    if (memblock) {
+        munmap(memblock, sb.st_size);
+    }
+    
+    if (json_file) {
+        fclose(json_file);
+    }
+    
+    return ret;
 }
 
 #define OFFSET(x) offsetof(OptionsContext, x)

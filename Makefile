@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-I$(LIBAV_PATH)
 DEPS = avconv.h
-LDFLAGS=-lavdevice -lavfilter -lavformat -lavcodec -lavresample -lswscale -lavutil -lx264 -lpthread -lm -ldl -lfreetype -lfontconfig -lfreetype -lfdk-aac -lbmd -ldl -lstdc++ -lm -lz -pthread
+LDFLAGS=-lavdevice -lavfilter -lavformat -lavcodec -lavresample -lswscale -lavutil -lx264 -lpthread -lm -ldl -lfreetype -lfontconfig -lfreetype -lfdk-aac -lbmd -ldl -lstdc++ -lm -lz -pthread -ljson-c
 
 %.o: %.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
