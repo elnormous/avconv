@@ -2297,7 +2297,7 @@ int avconv_parse_json_options(char *json)
     
     fstat(fileno(json_file), &sb);
     
-    memblock = mmap(NULL, sb.st_size, PROT_WRITE, MAP_PRIVATE, fileno(json_file), 0);
+    memblock = mmap(NULL, sb.st_size, PROT_READ, MAP_PRIVATE, fileno(json_file), 0);
     
     if (memblock == MAP_FAILED) {
         ret = -1;
