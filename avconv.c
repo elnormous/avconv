@@ -2588,10 +2588,20 @@ int main(int argc, char **argv)
 
     show_banner();
 
-    /* parse options and open all input/output files */
-    ret = avconv_parse_options(argc, argv);
-    if (ret < 0)
-        exit_program(1);
+    char* json = parse_json(argc, argv, options);
+    
+    if (json) {
+        printf("JSON: %s\n", json);
+        ret = avconv_parse_json_options(json);
+        if (ret < 0)
+            exit_program(1);
+    }
+    else {
+        /* parse options and open all input/output files */
+        ret = avconv_parse_options(argc, argv);
+        if (ret < 0)
+            exit_program(1);
+    }
 
     if (nb_output_files <= 0 && nb_input_files == 0) {
         show_usage();

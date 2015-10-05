@@ -2275,6 +2275,11 @@ fail:
     return ret;
 }
 
+int avconv_parse_json_options(char* json)
+{
+    return -1;
+}
+
 #define OFFSET(x) offsetof(OptionsContext, x)
 const OptionDef options[] = {
     /* main options */

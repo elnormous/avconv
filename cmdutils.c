@@ -435,6 +435,15 @@ void parse_loglevel(int argc, char **argv, const OptionDef *options)
         opt_loglevel(NULL, "loglevel", argv[idx + 1]);
 }
 
+char* parse_json(int argc, char **argv, const OptionDef *options)
+{
+    int idx = locate_option(argc, argv, options, "json");
+    if (idx && argv[idx + 1])
+        return argv[idx + 1];
+    
+    return 0;
+}
+
 #define FLAGS (o->type == AV_OPT_TYPE_FLAGS) ? AV_DICT_APPEND : 0
 int opt_default(void *optctx, const char *opt, const char *arg)
 {

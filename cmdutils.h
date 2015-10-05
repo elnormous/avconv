@@ -322,6 +322,11 @@ void uninit_parse_context(OptionParseContext *octx);
 void parse_loglevel(int argc, char **argv, const OptionDef *options);
 
 /**
+ * Find the '-json' option in the command line args and return the value of it.
+ */
+char* parse_json(int argc, char **argv, const OptionDef *options);
+
+/**
  * Return index of option opt in argv or 0 if not found.
  */
 int locate_option(int argc, char **argv, const OptionDef *options,
