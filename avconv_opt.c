@@ -2287,6 +2287,7 @@ int avconv_parse_json_options(char *json)
     FILE *json_file = fopen(json, "r");
     struct stat sb;
     const char *memblock;
+    int i;
     
     if (!json_file) {
         ret = -1;
@@ -2308,35 +2309,68 @@ int avconv_parse_json_options(char *json)
     
     fjson = json_tokener_parse(memblock);
     
-    struct json_object* global;
-    if (json_object_object_get_ex(fjson, "global", &global)) {
-        struct json_object* loglevel;
+    //json_object_object_foreachC
+    json_object_object_foreach(fjson, key, val) {
         
-        if (json_object_object_get_ex(global, "loglevel", &loglevel)) {
-            const char* level = json_object_get_string(loglevel);
+        if (strncmp(key, "global", sizeof("global")) == 0) {
             
-            opt_loglevel(NULL, "loglevel", level);
+            struct json_object* loglevel;
             
-            json_object_object_del(global, "");
+            if (json_object_object_get_ex(val, "loglevel", &loglevel)) {
+                const char *level = json_object_get_string(loglevel);
+            
+                opt_loglevel(NULL, "loglevel", level);
+                
+                
+                printf("log level: %s\n", level);
+            }
         }
-    }
-    
-    struct json_object* input;
-    if (json_object_object_get_ex(fjson, "input", &input)) {
-        ret = json_object_get_int(input);
-        printf("ret: %d\n", ret);
-    }
-    
-    struct json_object* filter;
-    if (json_object_object_get_ex(fjson, "filter_complex", &filter)) {
-        ret = json_object_get_int(filter);
-        printf("ret: %d\n", ret);
-    }
-    
-    struct json_object* output;
-    if (json_object_object_get_ex(fjson, "output", &output)) {
-        ret = json_object_get_int(output);
-        printf("ret: %d\n", ret);
+        else if (strncmp(key, "input", sizeof("input")) == 0) {
+            
+            struct array_list *input_array = json_object_get_array(val);
+            
+            if (input_array) {
+                int len = json_object_array_length(val);
+                
+                for (i = 0; i < len; ++i) {
+                    
+                    json_object_array_get_idx(val, i);
+                    
+                    printf("input_key: %d\n", i);
+                }
+            }
+        }
+        else if (strncmp(key, "filter_complex", sizeof("filter_complex")) == 0) {
+            
+            struct array_list *filter_array = json_object_get_array(val);
+            
+            if (filter_array) {
+                int len = json_object_array_length(val);
+                
+                for (i = 0; i < len; ++i) {
+                    
+                    json_object *input = json_object_array_get_idx(val, i);
+                    
+                    printf("filter_array: %d\n", i);
+                }
+            }
+            
+        }
+        else if (strncmp(key, "output", sizeof("output")) == 0) {
+            
+            struct array_list *output_array = json_object_get_array(val);
+            
+            if (output_array) {
+                int len = json_object_array_length(val);
+                
+                for (i = 0; i < len; ++i) {
+                    
+                    json_object_array_get_idx(val, i);
+                    
+                    printf("output_key: %d\n", i);
+                }
+            }
+        }
     }
     
     ret = -1;
