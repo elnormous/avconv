@@ -2308,9 +2308,34 @@ int avconv_parse_json_options(char *json)
     
     fjson = json_tokener_parse(memblock);
     
-    struct json_object* child;
-    if (json_object_object_get_ex(fjson, "input", &child)) {
-        ret = json_object_get_int(child);
+    struct json_object* global;
+    if (json_object_object_get_ex(fjson, "global", &global)) {
+        struct json_object* loglevel;
+        
+        if (json_object_object_get_ex(global, "loglevel", &loglevel)) {
+            const char* level = json_object_get_string(loglevel);
+            
+            opt_loglevel(NULL, "loglevel", level);
+            
+            json_object_object_del(global, "");
+        }
+    }
+    
+    struct json_object* input;
+    if (json_object_object_get_ex(fjson, "input", &input)) {
+        ret = json_object_get_int(input);
+        printf("ret: %d\n", ret);
+    }
+    
+    struct json_object* filter;
+    if (json_object_object_get_ex(fjson, "filter_complex", &filter)) {
+        ret = json_object_get_int(filter);
+        printf("ret: %d\n", ret);
+    }
+    
+    struct json_object* output;
+    if (json_object_object_get_ex(fjson, "output", &output)) {
+        ret = json_object_get_int(output);
         printf("ret: %d\n", ret);
     }
     
